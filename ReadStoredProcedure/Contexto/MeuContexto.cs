@@ -19,19 +19,32 @@ namespace ReadStoredProcedure.Services
             return resultado;
         }
 
-        public void InserAlunoById(Aluno aluno)
+        public void InserAluno(Aluno aluno)
         {
-            Database.ExecuteSqlRaw("EXEC InsertAlunoById @paramNome, @paramIdade, @paramEstaMatriculado, @paramDisciplina",
+            try
+            {
+                Database.ExecuteSqlRaw("EXEC InsertAluno @paramNome, @paramIdade, @paramEstaMatriculado, @paramDisciplina",
                 new SqlParameter("@paramNome", aluno.Nome),
                 new SqlParameter("@paramIdade", aluno.Idade),
                 new SqlParameter("@paramEstaMatriculado", aluno.EstaMatriculado),
                 new SqlParameter("@paramDisciplina", aluno.Disciplina));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public IEnumerable<Aluno> GetAlunos()
         {
             var resultado = Alunos.FromSqlInterpolated($"EXEC GetAlunos").ToList();
             return resultado;
+        }
+
+        public void ExecutarStoredProcDeleteAluno(int alunoId)
+        {
+            Database.ExecuteSqlRaw("EXEC DeleteAluno @paramAlunoId",
+                new SqlParameter("@paramAlunoId", alunoId));
         }
     }
 }
